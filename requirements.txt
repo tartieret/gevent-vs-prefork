@@ -1,0 +1,8 @@
+gevent
+celery
+memory_profiler
+psutil
+pytest
+matplotlib
+numpy
+redis
