@@ -265,13 +265,28 @@ def print_results(profiles: List[MemoryProfile]) -> None:
 
     # Extract the task name from the full name for cleaner display
     def get_display_name(full_name: str) -> str:
+        # Format: pool_type_task_name_NxSIZEMB
+        # Example: prefork_prefork_multithreading_task_200x3.0MB
         parts = full_name.split("_")
-        # Get the task name without the pool type prefix
-        if len(parts) >= 2:
-            task_name = parts[1]
-            # Add the data size info
-            size_info = parts[-1] if len(parts) > 2 else ""
-            return f"{task_name} ({parts[0]}) {size_info}"
+
+        if len(parts) >= 3:
+            pool_type = parts[0]  # e.g., 'prefork' or 'gevent'
+
+            # Extract the task type from the name
+            if "multithreading" in full_name:
+                task_type = "multithreading"
+            elif "sequential" in full_name:
+                task_type = "sequential"
+            elif "pool" in full_name:
+                task_type = "gevent pool"
+            else:
+                task_type = parts[1]  # Fallback to the second part
+
+            # Extract size info (last part)
+            size_info = parts[-1] if "x" in parts[-1] else ""
+
+            return f"{pool_type} ({task_type}) {size_info}"
+
         return full_name
 
     # Find the longest name for proper padding
